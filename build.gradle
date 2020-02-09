@@ -31,10 +31,10 @@ dependencies {
 }
 
 flyway {
-    //url = 'jdbc:mysql://mysql-server:3306/my_database?characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false'
-    //user = 'root'
-    //password = 'password'
-    url = 'jdbc:mysql://192.168.99.100:3306/elio?characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false'
+    url = 'jdbc:mysql://mysql-server:3306/my_database?characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false'
     user = 'root'
-    password = 'elio1'
+    password = 'password'
+    //url = 'jdbc:mysql://192.168.99.100:3306/elio?characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false'
+    //user = 'root'
+    //password = 'elio1'
 }

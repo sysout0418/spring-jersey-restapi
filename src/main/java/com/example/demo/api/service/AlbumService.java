@@ -11,4 +11,6 @@ public interface AlbumService {
 
     List<Album> getAlbumList(Map<String, Object> paramMap);
 
+    Map<String, Object> getPageInfo(int page, int albumSize);
+
 }

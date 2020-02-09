@@ -10,11 +10,11 @@ public class PageUtil {
 	public void setPagingInfo(Map<String, Object> paramMap) {
 
 		int pageNo = Integer.parseInt((String) paramMap.get("page"));
-		int displayCnt = Integer.parseInt((String) paramMap.get("row_count"));
+		int displayCnt = Integer.parseInt((String) paramMap.get("display_count"));
 		
 		int startNum = (pageNo - 1) * displayCnt;
 		
-		paramMap.put("display_count", displayCnt);
+		//paramMap.put("display_count", displayCnt);
 		paramMap.put("offset", startNum);
 	}
 

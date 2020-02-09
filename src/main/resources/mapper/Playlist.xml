@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Playlist">
+
+	<insert id="insertPlaylist" parameterType="com.example.demo.api.dto.Playlist">
+		INSERT INTO TB_PLAYLIST (
+			USER_ID
+			, PLAYLIST_NAME
+			, DELETE_YN
+			, INSERTED_ID
+			, INSERTED_DATE
+			, UPDATED_ID
+			, UPDATED_DATE
+		) VALUES (
+			#{userId}
+			, #{playlistName}
+			, 'N'
+			, 'system'
+			, sysdate()
+			, 'system'
+			, sysdate()
+		)
+	</insert>
+
+	<insert id="insertPlaylistSong" parameterType="com.example.demo.api.dto.Playlist">
+		INSERT INTO TB_PLAYLIST_SONG (
+			PLAYLIST_ID
+			, SONG_ID
+			, DELETE_YN
+			, INSERTED_ID
+			, INSERTED_DATE
+			, UPDATED_ID
+			, UPDATED_DATE
+		) VALUES
+		<foreach collection="songs" item="song" separator=",">
+			(
+				#{playlistId}
+				, ${song.id}
+				, 'N'
+				, 'system'
+				, sysdate()
+				, 'system'
+				, sysdate()
+			)
+		</foreach>
+	</insert>
+
+	<resultMap id="userPlaylistResultMap" type="com.example.demo.api.dto.Playlist">
+		<id property="playlistId" column="playlistId" />
+		<result property="userId" column="userId"/>
+		<result property="playlistName" column="playlistName"/>
+		<collection property="songs" javaType="List" resultMap="songResultMap"/>
+	</resultMap>
+
+	<resultMap id="songResultMap" type="com.example.demo.api.dto.Song">
+		<id property="id" column="songId"/>
+		<result property="title" column="songTitle"/>
+		<result property="track" column="trackNo"/>
+		<result property="length" column="songLength"/>
+	</resultMap>
+
+	<select id="getUserPlaylist" parameterType="java.util.Map" resultMap="userPlaylistResultMap">
+		SELECT P.PLAYLIST_ID AS playlistId
+			 , P.PLAYLIST_NAME AS playlistName
+			 , #{userId} AS userId
+			 , PS.SONG_ID AS songId
+			 , PS.SONG_TITLE AS songTitle
+			 , PS.TRACK_NO AS trackNo
+			 , PS.SONG_LENGTH AS songLength
+		  FROM TB_PLAYLIST P
+			   LEFT OUTER JOIN (
+					SELECT T1.PLAYLIST_ID, T2.SONG_ID, T2.SONG_TITLE, T2.TRACK_NO, T2.SONG_LENGTH
+					  FROM TB_PLAYLIST_SONG T1
+						   INNER JOIN TB_SONG T2
+								   ON T1.SONG_ID = T2.SONG_ID
+					 WHERE T1.DELETE_YN = 'N'
+						   AND T2.DELETE_YN = 'N'
+			   ) PS
+			   ON P.PLAYLIST_ID = PS.PLAYLIST_ID
+		 WHERE P.DELETE_YN = 'N'
+		<if test="userId != null">
+			AND P.USER_ID = #{userId}
+		</if>
+		<if test="playlistId != null">
+			AND P.PLAYLIST_ID = #{playlistId}
+		</if>
+	</select>
+
+	<update id="deletePlaylist" parameterType="java.util.Map">
+		UPDATE TB_PLAYLIST
+			SET UPDATED_ID = 'system'
+				, UPDATED_ID = SYSDATE()
+				, DELETE_YN = 'Y'
+			WHERE PLAYLIST_ID = #{playlistId} AND USER_ID = #{userId}
+	</update>
+
+</mapper>

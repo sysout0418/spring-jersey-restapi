@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Search">
+
+	<resultMap id="searchResultMap" type="com.example.demo.api.dto.Album">
+		<id property="id" column="albumId" />
+		<result property="title" column="albumTitle"/>
+		<collection property="songs" javaType="List" resultMap="songResultMap"/>
+	</resultMap>
+
+	<resultMap id="songResultMap" type="com.example.demo.api.dto.Song">
+		<id property="id" column="songId"/>
+		<result property="title" column="songTitle"/>
+		<result property="track" column="trackNo"/>
+		<result property="length" column="songLength"/>
+	</resultMap>
+	
+	<select id="getAlbumList" parameterType="java.util.Map" resultMap="searchResultMap">
+		SELECT A.ALBUM_ID AS albumId
+			   , A.ALBUM_TITLE AS albumTitle
+			   , S.SONG_ID AS songId
+			   , S.SONG_TITLE AS songTitle
+			   , S.TRACK_NO AS trackNo
+			   , S.SONG_LENGTH AS songLength
+		  FROM TB_ALBUM A
+			   INNER JOIN TB_ALBUM_LOCALE AL
+					   ON A.ALBUM_ID = AL.ALBUM_ID
+			   INNER JOIN TB_LOCALE L
+					   ON AL.LOCALE_ID = L.LOCALE_ID
+			   INNER JOIN TB_SONG S
+					   ON A.ALBUM_ID = S.ALBUM_ID
+		 WHERE A.DELETE_YN = 'N'
+			   AND AL.DELETE_YN = 'N'
+			   AND L.DELETE_YN = 'N'
+			   AND S.DELETE_YN = 'N'
+			   AND L.LOCALE_NAME = #{locale}
+			   AND UPPER (A.ALBUM_TITLE) LIKE CONCAT('%', UPPER (#{title}), '%')
+		ORDER BY A.ALBUM_ID ASC, S.SONG_ID ASC, S.TRACK_NO ASC
+	</select>
+
+	<select id="getSongList" parameterType="java.util.Map" resultMap="songResultMap">
+		SELECT S.SONG_ID AS songId
+			   , S.SONG_TITLE AS songTitle
+			   , S.TRACK_NO AS trackNo
+			   , S.SONG_LENGTH AS songLength
+		  FROM TB_ALBUM A
+			   INNER JOIN TB_ALBUM_LOCALE AL
+					   ON A.ALBUM_ID = AL.ALBUM_ID
+			   INNER JOIN TB_LOCALE L
+					   ON AL.LOCALE_ID = L.LOCALE_ID
+			   INNER JOIN TB_SONG S
+					   ON A.ALBUM_ID = S.ALBUM_ID
+		 WHERE A.DELETE_YN = 'N'
+			   AND AL.DELETE_YN = 'N'
+			   AND L.DELETE_YN = 'N'
+			   AND S.DELETE_YN = 'N'
+			   AND L.LOCALE_NAME = #{locale}
+			   AND UPPER (S.SONG_TITLE) LIKE CONCAT('%', UPPER (#{title}), '%')
+		ORDER BY A.ALBUM_ID ASC, S.SONG_ID ASC, S.TRACK_NO ASC
+	</select>
+
+</mapper>

@@ -6,7 +6,6 @@ import com.example.demo.api.service.AlbumService;
 import com.example.demo.common.PageUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -24,8 +23,9 @@ public class AlbumServiceImpl implements AlbumService {
     @Resource(name = "PageUtil")
     private PageUtil pageUtil;
 
-    @Value("${server.address}")
-    private String serverAddress;
+//    @Value("${server.address}")
+//    private String serverAddress;
+    private String serverAddress = "http://localhost";
 
     @Override
     public List<Album> getAlbumList(Map<String, Object> paramMap) {
